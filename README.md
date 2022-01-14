@@ -1,2 +1,2 @@
 # ehr-api
-Electronic Health Record API
+Monorepo for EHR API micro services.
