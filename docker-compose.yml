@@ -1,0 +1,35 @@
+version: "3.9"
+
+volumes:
+  static:
+
+services:
+  auth-db:
+    image: postgres:14.1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  auth-service:
+    build: ./auth-service/
+    command: gunicorn config.wsgi --bind 0.0.0.0:8000
+    environment:
+      - FORCE_SCRIPT_NAME=/auth
+      - STATIC_ROOT=/var/www/static
+      - PG_NAME=postgres
+      - PG_HOST=auth-db
+      - PG_PASSWORD=postgres
+    volumes:
+      - static:/var/www/static
+    depends_on:
+      - auth-db
+  
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - static:/var/www/static
+    ports:
+      - 4000:80
+    depends_on:
+      - auth-service
