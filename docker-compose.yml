@@ -10,10 +10,17 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
 
+  patient-db:
+    image: postgres:14.1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
   auth-service:
     build: ./auth-service/
     command: gunicorn config.wsgi --bind 0.0.0.0:8000
     environment:
+      - SIGNING_KEY=5ahp8kseKOVB_w-DTpQoK4Akl3nVy45Lmbev2NNm95wUyLytIxli6pHccX
       - FORCE_SCRIPT_NAME=/auth
       - STATIC_ROOT=/var/www/static
       - PG_NAME=postgres
@@ -23,6 +30,21 @@ services:
       - static:/var/www/static
     depends_on:
       - auth-db
+  
+  patient-service:
+    build: ./patient-service/
+    command: gunicorn config.wsgi --bind 0.0.0.0:8000
+    environment:
+      - SIGNING_KEY=5ahp8kseKOVB_w-DTpQoK4Akl3nVy45Lmbev2NNm95wUyLytIxli6pHccX
+      - FORCE_SCRIPT_NAME=/patients
+      - STATIC_ROOT=/var/www/static
+      - PG_NAME=postgres
+      - PG_HOST=patient-db
+      - PG_PASSWORD=postgres
+    volumes:
+      - static:/var/www/static
+    depends_on:
+      - patient-db
   
   nginx:
     image: nginx

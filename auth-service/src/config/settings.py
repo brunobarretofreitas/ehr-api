@@ -132,8 +132,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Rest Framework
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework_simplejwt.authentication.JWTTokenUserAuthentication",
     )
 }
 
 SIMPLE_JWT = {"SIGNING_KEY": os.getenv("SIGNING_KEY", SECRET_KEY)}
+
+from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
