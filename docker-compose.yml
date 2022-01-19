@@ -16,6 +16,12 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
 
+  appointment-db:
+    image: postgres:14.1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
   auth-service:
     build: ./auth-service/
     command: gunicorn config.wsgi --bind 0.0.0.0:8000
@@ -45,6 +51,21 @@ services:
       - static:/var/www/static
     depends_on:
       - patient-db
+
+  appointment-service:
+    build: ./appointment-service/
+    command: gunicorn config.wsgi --bind 0.0.0.0:8000
+    environment:
+      - SIGNING_KEY=5ahp8kseKOVB_w-DTpQoK4Akl3nVy45Lmbev2NNm95wUyLytIxli6pHccX
+      - FORCE_SCRIPT_NAME=/appointments
+      - STATIC_ROOT=/var/www/static
+      - PG_NAME=postgres
+      - PG_HOST=appointment-db
+      - PG_PASSWORD=postgres
+    volumes:
+      - static:/var/www/static
+    depends_on:
+      - appointment-db
   
   nginx:
     image: nginx
