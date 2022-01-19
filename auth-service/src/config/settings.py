@@ -137,5 +137,3 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {"SIGNING_KEY": os.getenv("SIGNING_KEY", SECRET_KEY)}
-
-from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
